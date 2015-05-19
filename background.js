@@ -49,17 +49,6 @@ var courseId=[];
         };
         chrome.storage.sync.set({'oldCourses':courseId},function(){
             checkForIncoming(page);
-
-/*          chrome.storage.sync.get('oldCourses',function(items){
-            courseId=items.oldCourses;
-
-            for (var i = 0; i < courseId.length; i++) {
-              inComingCourses.push($(page).find('tr').filter(function(){return $(this).find('td:eq(1)').text()==courseId[i]&&$(this).find('img').attr('src')=="https://zajelbs.najah.edu:443/zajel/images/curricula/needed.gif"}));
-            };
-            
-          });
-        */
-    
           
 
         });
@@ -69,16 +58,13 @@ var courseId=[];
     };
   checkForIncoming=function(page){
     
-    var courseId=[];
-    chrome.storage.sync.get('oldCourses',function(items){
-      courseId=items.oldCourses;
       for (var i = 0; i < courseId.length; i++) {
                 
         var tr=$(page).find('tr').filter(function(){return $(this).find('td:eq(1)').text()==courseId[i]});
         if($(tr).find('img').attr('src')=="https://zajelbs.najah.edu:443/zajel/images/curricula/needed.gif")inComingCourses.push(courseId);
       };
-      console.log(inComingCourses);
-    });
+    
+    
 
     
   }
