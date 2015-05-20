@@ -1,6 +1,7 @@
 var planIntervalTime=1000;
 var inComingCourses=[];
 var courseId=[];
+chrome.storage.sync.get('[inComingCourses,oldCourses]',function(items){inComingCourses=items.inComingCourses;courseId=items.oldCourses});
   chrome.webRequest.onBeforeSendHeaders.addListener(
 
         function(details) {
@@ -63,6 +64,7 @@ var courseId=[];
         var tr=$(page).find('tr').filter(function(){return $(this).find('td:eq(1)').text()==courseId[i]});
         if($(tr).find('img').attr('src')=="https://zajelbs.najah.edu:443/zajel/images/curricula/needed.gif")inComingCourses.push(courseId);
       };
+      chrome.storage.sync.set({'inComingCourses':inComingCourses});
     
     
 
@@ -72,7 +74,6 @@ var courseId=[];
   
   var r= new XMLHttpRequest();
   var c=new XMLHttpRequest();
-  var main=new XMLHttpRequest();
   var loginInterval=setInterval(function(){r.open("POST","https://zajelbs.najah.edu/servlet/login",true);
     r.send( "startDate=1401949868491&stuNum=11317458&pasWrd=975509548");
     r.onreadystatechange=function(){
@@ -81,18 +82,16 @@ var courseId=[];
    },1000*60*14);
   c.open("GET","https://zajelbs.najah.edu/servlet/ZajSSChk",true);
   plan.open("POST","https://zajelbs.najah.edu/servlet/curricula",true);
-  main.open("GET","https://zajelbs.najah.edu/servlet/stuReg?main=",true)
 
  
  
   }
   c.onreadystatechange=function(){
-   if(c.readyState==4&&c.status==200) main.send();
-  }
-main.onreadystatechange=function(){
-  if(main.readyState==4&&main.status==200)
+   if(c.readyState==4&&c.status==200){
     var planInterval=setInterval(function(){plan.send();},planIntervalTime);
-}
+    }
+  }
+
 plan.onreadystatechange=function(){
   if(plan.readyState==4&&plan.status==200){
     var html=$(plan.responseText);
