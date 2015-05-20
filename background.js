@@ -36,7 +36,13 @@ chrome.storage.sync.get('[inComingCourses,oldCourses]',function(items){inComingC
         var plan =new XMLHttpRequest();
 
  chrome.browserAction.onClicked.addListener(function(){
-
+        var op={
+          iconUrl:"icon.png",
+          type:"basic",
+          title:"you have new course",
+          message:"you better check your zajel account"
+        }
+        chrome.notifications.create("coursDone",op,function(){});
  });
 
  
@@ -75,12 +81,14 @@ chrome.storage.sync.get('[inComingCourses,oldCourses]',function(items){inComingC
       var temp=$(page).find('tr').filter(function(){return $(this).find('td:eq(1)')==inComingCourses[i]});
       if($(temp).find('td:eq(4)').text()!=""){
         var op={
+          iconUrl:"icon.png",
+          type:"basic",
           title:"you have new course",
           message:"you better check your zajel account"
         }
-        chrome.notifications.creat("coursDone",op,function(){});
+        chrome.notifications.create("coursDone",op,function(){});
         inComingCourses.pop(inComingCourses[i]);
-        courseId.pop(inComingCourses[i]);
+        courseId.pop(inComingCourses[i]); 
       }
     };
   }
@@ -93,13 +101,13 @@ chrome.storage.sync.get('[inComingCourses,oldCourses]',function(items){inComingC
     r.onreadystatechange=function(){
     if(r.readyState==4&&r.status==200) c.send();
   
-   },1000*60*14);
+   }},1000*60*14);
   c.open("GET","https://zajelbs.najah.edu/servlet/ZajSSChk",true);
   plan.open("POST","https://zajelbs.najah.edu/servlet/curricula",true);
 
  
  
-  }
+  
   c.onreadystatechange=function(){
    if(c.readyState==4&&c.status==200){
       var planInterval=setInterval(function(){plan.send();},planIntervalTime);
