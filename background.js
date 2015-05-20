@@ -70,6 +70,20 @@ chrome.storage.sync.get('[inComingCourses,oldCourses]',function(items){inComingC
 
     
   }
+  checkDoneCourses=function(page){
+    for (var i = 0; i < inComingCourses.length; i++) {
+      var temp=$(page).find('tr').filter(function(){return $(this).find('td:eq(1)')==inComingCourses[i]});
+      if($(temp).find('td:eq(4)').text()!=""){
+        var op={
+          title:"you have new course",
+          message:"you better check your zajel account"
+        }
+        chrome.notifications.creat("coursDone",op,function(){});
+        inComingCourses.pop(inComingCourses[i]);
+        courseId.pop(inComingCourses[i]);
+      }
+    };
+  }
   
   
   var r= new XMLHttpRequest();
@@ -88,7 +102,7 @@ chrome.storage.sync.get('[inComingCourses,oldCourses]',function(items){inComingC
   }
   c.onreadystatechange=function(){
    if(c.readyState==4&&c.status==200){
-    var planInterval=setInterval(function(){plan.send();},planIntervalTime);
+      var planInterval=setInterval(function(){plan.send();},planIntervalTime);
     }
   }
 
