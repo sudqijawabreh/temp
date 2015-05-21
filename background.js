@@ -1,4 +1,4 @@
-var planIntervalTime=1000*60;
+var planIntervalTime=1000*10;
 var inComingCourses=[];
 var courseId=[];
 chrome.storage.local.get('[inComingCourses,oldCourses]',function(items){
@@ -90,7 +90,9 @@ chrome.storage.local.get('[inComingCourses,oldCourses]',function(items){
   }
   checkDoneCourses=function(page){
     for (var i = 0; i < inComingCourses.length; i++) {
-      var temp=$(page).find('tr').filter(function(){return $(this).find('td:eq(1)')==inComingCourses[i]});
+      console.log(inComingCourses[i]);
+      var temp=$(page).find('tr').filter(function(){return $(this).find('td:eq(1)').text()==inComingCourses[i]});
+      console.log($(temp).find('td:eq(4)').text());
       if($(temp).find('td:eq(4)').text()!=""){
         var op={
           iconUrl:"icon.png",
