@@ -16,7 +16,17 @@ alert(d=decodeURIComponent(url));
 }
 }
 getFlashUrl();
-chrome.downloads.download({url:d});
+  var vids=$('.vids');
+  var pageUrl=document.URL;
+  var urls=[];
+  for(var i=0;i<vids.length;i++){
+    var temp=$(vids[i]).find('a').attr('href');
+    urls.push(pageUrl+temp);
+    alert(urls[i]);
+  }
+chrome.runtime.sendMessage({links:urls},function(response){
+	console.log(response.farewell);
+});
 
 
 

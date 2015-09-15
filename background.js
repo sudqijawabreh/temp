@@ -1,9 +1,34 @@
 
+   chrome.runtime.onMessage.addListener(function(request,sender,sendResponse){
+    alert(request.links);
+   });
+   var extractVideo=function(var html){
+
+   }
+  var d="";
+var getMp4Url=function(html){
+  var url=$('#wistia_13_source').attr('src');
+  d=url;
+  alert(url);
+}
+var getFlashUrl=function(html){
+var raw=($('param[name="flashvars"').attr('value'));
+if(raw==undefined){
+  getMp4Url();
+}
+else{
+var url=raw.substring(raw.lastIndexOf("videoUrl")+("videoUrl=").length,raw.lastIndexOf('&'));
+
+alert(d=decodeURIComponent(url));
+}
+}
+ 
  chrome.browserAction.onClicked.addListener(function(tab){
    var currentId=0;
   chrome.tabs.executeScript(tab.id,{file:"jquery-2.1.4.min.js"});
   chrome.tabs.executeScript(tab.id,{file:"extract.js"});
-  chrome.downloads.download({url:"https://embed-ssl.wistia.com/deliveries/9b0667a29b9d0d37be229060f8e42ebc7e8ed3ee/file.mp4"})
+
+
 });
 
 /*  chrome.webRequest.onBeforeSendHeaders.addListener(
