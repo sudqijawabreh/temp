@@ -2,19 +2,17 @@
    chrome.runtime.onMessage.addListener(function(request,sender,sendResponse){
     alert(request.links);
    });
-   var extractVideo=function(var html){
-
-   }
   var d="";
 var getMp4Url=function(html){
-  var url=$('#wistia_13_source').attr('src');
+  var url=$(html).find('#wistia_13_source').attr('src');
   d=url;
   alert(url);
 }
 var getFlashUrl=function(html){
-var raw=($('param[name="flashvars"').attr('value'));
+var raw=$(html).find('param[name="flashvars"]').attr('value')
+console.log(html);
 if(raw==undefined){
-  getMp4Url();
+  getMp4Url(html);
 }
 else{
 var url=raw.substring(raw.lastIndexOf("videoUrl")+("videoUrl=").length,raw.lastIndexOf('&'));
@@ -31,6 +29,15 @@ alert(d=decodeURIComponent(url));
 
 });
 
+  var r= new XMLHttpRequest();
+  r.open("GET","https://www.skillfeed.com/courses/5874-learn-complete-wordpress-security?video_id=73288-safe-secure-passwords",true);
+  r.send();
+    r.onreadystatechange=function(){
+
+      if(r.readyState==4&&r.status==200){
+        getFlashUrl(r.response);
+     }
+   }
 /*  chrome.webRequest.onBeforeSendHeaders.addListener(
 
         function(details) {
