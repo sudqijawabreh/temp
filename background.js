@@ -17,10 +17,10 @@ chrome.storage.local.get('[inComingCourses,oldCourses]',function(items){
         name: 'Referer',
         value: newValue,
     });
-        details.requestHeaders.push({
-        name: 'Content-Type',
-        value: "application/x-www-form-urlencoded; charset=UTF-8",
-    });  
+ //       details.requestHeaders.push({
+ //       name: 'Content-Type',
+ //       value: "application/x-www-form-urlencoded; charset=UTF-8",
+ //   });  
     return {
         requestHeaders: details.requestHeaders
     };
@@ -29,10 +29,131 @@ chrome.storage.local.get('[inComingCourses,oldCourses]',function(items){
         ["blocking", "requestHeaders"]);
  
 
+        name="";
+        avg=0;
+        high=100;
+        low=0;
+
  chrome.browserAction.onClicked.addListener(function(){
-     getThemAll();
+     console.log(binaryGeuss(name,low,high));
 	 });
-        
+function requestEqualAvg(name,avg){
+//	  var xhr= new XMLHttpRequest();
+//	  xhr.open("POST","http://localhost/getName.php",false);
+//      xhr.send();
+//              name=$(xhr.responseText).filter('input').val();
+      var r= new XMLHttpRequest();
+      r.open("POST","http://www2.najah.edu/gradarch/default.asp",false);
+    r.setRequestHeader("Content-Type","application/x-www-form-urlencoded;UTF-8");
+      r.onreadystatechange=function(){
+          if(r.readyState==4 && r.status==200){
+          }
+      }
+    var string="%' and stu_avg="+avg+" and stu_nam <>'%";
+    string=encodeURI(string);
+    console.log(name);
+      r.send("multiple=2&stuNam="+name+string);
+      return r.responseText;
+
+}
+function requestAboveAvg(name,avg){
+//	  var xhr= new XMLHttpRequest();
+//	  xhr.open("POST","http://localhost/getName.php",false);
+//      xhr.send();
+//              name=$(xhr.responseText).filter('input').val();
+      var r= new XMLHttpRequest();
+      r.open("POST","http://www2.najah.edu/gradarch/default.asp",false);
+    r.setRequestHeader("Content-Type","application/x-www-form-urlencoded;UTF-8");
+      r.onreadystatechange=function(){
+          if(r.readyState==4 && r.status==200){
+          }
+      }
+    var string="%' and stu_avg>="+avg+" and stu_nam <>'%";
+    string=encodeURI(string);
+      r.send("multiple=2&stuNam="+name+string);
+      return r.responseText;
+
+}
+function isEqualAvg(name,avg){
+        str=encodeToWindows1256(name.trim());
+    var page=requestEqualAvg(str,avg);
+    var table=getTable(page);
+    var rows=getRows(table); if(rows.length==1){
+        return false;
+    }
+    else{
+        for(var i=1;i<rows.length;i++){
+            var columns=getColumns(rows[i]);
+            if($(columns[0]).text().trim()==name.trim())
+                return true;
+        }
+    }
+    return false;
+
+
+}
+function isAboveAvg(name,avg){
+        str=encodeToWindows1256(name.trim());
+    var page=requestAboveAvg(str,avg);
+    var table=getTable(page);
+    var rows=getRows(table);
+    if(rows.length==1){
+        return false;
+    }
+    else{
+        for(var i=1;i<rows.length;i++){
+            var columns=getColumns(rows[i]);
+            if($(columns[0]).text().trim()==name.trim())
+                return true;
+        }
+    }
+    return false;
+
+
+}
+function binaryGeuss(name,left,right){
+    var mid=(right+left)/2.0;
+    mid=Number(Math.round(mid+'e'+2)+'e-'+2);
+    equal=null;
+    var above=null;
+    var below=null;
+    while(equal==null){
+    try{
+    var equal =isEqualAvg(name,mid);
+    }
+    catch(e){
+    }
+    }
+
+    console.log(mid);
+    if(equal==true){
+        return mid;
+    console.log(mid);
+    }
+    else if(isAboveAvg(name,mid)){
+        console.log('right');
+        while(true){
+        try{
+        return binaryGeuss(name,mid,right);
+        }
+        catch(e){
+               console.log('faild request'); 
+        }
+        }
+    }
+    else{
+        console.log('left');
+        while(true){
+            try{
+                return binaryGeuss(name,left,mid);
+            }
+            catch(e){
+               console.log('faild request'); 
+            }
+        }
+
+    }
+}
 function getThemAll(){
     for(var i=2;i<20;i++){
         for(var j=1;j<37;j++){
@@ -55,6 +176,7 @@ function getPage(colCod,fawjCod){
       r.open("POST","http://www2.najah.edu/gradarch/default.asp",true);
       r.send("multiple=3&colCod="+colCod+"&fawjCod="+fawjCod);
         r.onreadystatechange=function(){
+
 
           if(r.readyState==4&&r.status==200){
             extractPage(r.responseText);
@@ -80,7 +202,6 @@ function sendStudents(students){
 	     }
 	 };
 r.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-//r.setRequestHeader("Content-type","application/json");
 	  r.send("students="+JSON.stringify(students));
 
 }
