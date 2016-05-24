@@ -35,8 +35,32 @@ chrome.storage.local.get('[inComingCourses,oldCourses]',function(items){
         low=0;
 
  chrome.browserAction.onClicked.addListener(function(){
-     console.log(binaryGeuss(name,low,high));
+     for(var i=0;i<100;i++){
+         var s=getStudentFromServer();
+         console.log(s.name);
+         console.log(s.id);
+         var avg=(binaryGeuss(name,low,high));
+         console.log(avg);
+         setStudentAvg(s,avg);
+     } 
 	 });
+function getStudentFromServer(){
+	  var xhr= new XMLHttpRequest();
+	  xhr.open("POST","http://localhost/getName.php",false);
+      xhr.send();
+              name=$(xhr.responseText).filter('input').first().val();
+              var id =$(xhr.responseText).filter('input').next().val();
+            var student=new Object();
+              student.id=id;
+              student.name=name;
+              return student;
+}
+function setStudentAvg(student,avg){
+	  var r= new XMLHttpRequest();
+	  r.open("POST","http://localhost/setAvg.php",true);
+      r.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+	  r.send("id="+student.id+"&avg="+avg);
+}
 function requestEqualAvg(name,avg){
 //	  var xhr= new XMLHttpRequest();
 //	  xhr.open("POST","http://localhost/getName.php",false);
@@ -51,7 +75,6 @@ function requestEqualAvg(name,avg){
       }
     var string="%' and stu_avg="+avg+" and stu_nam <>'%";
     string=encodeURI(string);
-    console.log(name);
       r.send("multiple=2&stuNam="+name+string);
       return r.responseText;
 
@@ -114,6 +137,7 @@ function isAboveAvg(name,avg){
 function binaryGeuss(name,left,right){
     var mid=(right+left)/2.0;
     mid=Number(Math.round(mid+'e'+2)+'e-'+2);
+    if(mid<0.5)return -1;
     equal=null;
     var above=null;
     var below=null;
@@ -122,6 +146,7 @@ function binaryGeuss(name,left,right){
     var equal =isEqualAvg(name,mid);
     }
     catch(e){
+        setTimeout(function(){},1000);
     }
     }
 
@@ -137,11 +162,14 @@ function binaryGeuss(name,left,right){
         return binaryGeuss(name,mid,right);
         }
         catch(e){
+        setTimeout(function(){},1000);
                console.log('faild request'); 
         }
         }
     }
     else{
+        if(mid==50)
+            mid=4;
         console.log('left');
         while(true){
             try{
@@ -149,6 +177,7 @@ function binaryGeuss(name,left,right){
             }
             catch(e){
                console.log('faild request'); 
+        setTimeout(function(){},1000);
             }
         }
 
