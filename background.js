@@ -31,6 +31,7 @@ high=100;
 low=0;
 
 chrome.browserAction.onClicked.addListener(function(){
+    console.log('hi');
     for(var i=0;i<100;i++){
         var s=getStudentFromServer();
         console.log(s.name);
