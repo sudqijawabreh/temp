@@ -3,44 +3,48 @@ chrome.storage.local.get('[inComingCourses,oldCourses]',function(items){
     if(items.courseId!==undefined)courseId=items.oldCourses;
 });
 chrome.webRequest.onBeforeSendHeaders.addListener(
-
         function(details) {
             var newValue="";
+
             if(details.url=="http://www2.najah.edu/gradarch/default.asp"){
+
                 newValue="http://www2.najah.edu/gradarch/default.asp";
             }
+
             details.requestHeaders.push({
                 name: 'Referer',
                 value: newValue,
             });
             //       details.requestHeaders.push({
-            //       name: 'Content-Type',
+            //       name: 'Content-Type,
             //       value: "application/x-www-form-urlencoded; charset=UTF-8",
-            //   });  
+            //   });
             return {
                 requestHeaders: details.requestHeaders
             };
         },
         {urls: ["http://www2.najah.edu/gradarch/default.asp"]},
-        ["blocking", "requestHeaders"]);
-
+        ["blocking", "requestHeaders"])
 
 name="";
 avg=0;
 high=100;
 low=0;
-
-chrome.browserAction.onClicked.addListener(function(){
-    console.log('hi');
-    for(var i=0;i<100;i++){
+debugger;
+//while(true){
+//for(var i=0;i<10;i++){
         var s=getStudentFromServer();
         console.log(s.name);
         console.log(s.id);
         var avg=(binaryGeuss(name,low,high));
         console.log(avg);
         setStudentAvg(s,avg);
-    } 
-});
+        if(i==5)chrome.runtime.reload();
+
+//}
+//}
+//chrome.browserAction.onClicked.addListener(function(){
+//});
 function getStudentFromServer(){
     var xhr= new XMLHttpRequest();
     xhr.open("POST","http://localhost/getName.php",false);
@@ -54,7 +58,7 @@ function getStudentFromServer(){
 }
 function setStudentAvg(student,avg){
     var r= new XMLHttpRequest();
-    r.open("POST","http://localhost/setAvg.php",true);
+    r.open("POST","http://localhost/setAvg.php",false);
     r.setRequestHeader("Content-type","application/x-www-form-urlencoded");
     r.send("id="+student.id+"&avg="+avg);
 }
@@ -99,18 +103,15 @@ function isEqualAvg(name,avg){
     var page=requestEqualAvg(str,avg);
     var table=getTable(page);
     var rows=getRows(table); if(rows.length==1){
-      
     }
     else{
         for(var i=1;i<rows.length;i++){
             var columns=getColumns(rows[i]);
-            if($(columns[0]).text().trim()==name.trim())
+            if($(columns[0]).text().trim()==name.trim()||rows.length==2)
                 return true;
         }
     }
     return false;
-
-
 }
 function isAboveAvg(name,avg){
     str=encodeToWindows1256(name.trim());
@@ -123,7 +124,7 @@ function isAboveAvg(name,avg){
     else{
         for(var i=1;i<rows.length;i++){
             var columns=getColumns(rows[i]);
-            if($(columns[0]).text().trim()==name.trim())
+            if($(columns[0]).text().trim()==name.trim()||rows.length==2)
                 return true;
         }
     }
@@ -134,9 +135,10 @@ function isAboveAvg(name,avg){
 function binaryGeuss(name,left,right){
     var mid=(right+left)/2.0;
         mid=Number(Math.round(mid+'e'+2)+'e-'+2);
-    if(mid<0.5)return -1;
+    if(mid<0.5)return 0;
     equal=null;
-    var above=null;
+
+var above=null;
     var below=null;
     while(equal==null){
         try{
@@ -150,7 +152,14 @@ function binaryGeuss(name,left,right){
     console.log(mid);
     if(equal==true){
         return mid;
-        console.log(mid);
+        try
+        {
+            console.log(mid);
+        }
+        catch(e){
+            console.log('faild request');
+            setTimeout(function(){},1000);
+        }
     }
     else if(isAboveAvg(name,mid)){
         console.log('right');
@@ -160,7 +169,7 @@ function binaryGeuss(name,left,right){
             }
             catch(e){
                 setTimeout(function(){},1000);
-                console.log('faild request'); 
+                console.log('faild request');
             }
         }
     }
@@ -173,7 +182,7 @@ function binaryGeuss(name,left,right){
                 return binaryGeuss(name,left,mid);
             }
             catch(e){
-                console.log('faild request'); 
+                console.log('faild request');
                 setTimeout(function(){},1000);
             }
         }
@@ -203,7 +212,6 @@ function getPage(colCod,fawjCod){
     r.send("multiple=3&colCod="+colCod+"&fawjCod="+fawjCod);
     r.onreadystatechange=function(){
 
-
         if(r.readyState==4&&r.status==200){
             extractPage(r.responseText);
         }
@@ -214,7 +222,7 @@ function extractPage(page){
     var rows=getRows(table);
     var students=[];
     for(var i=1;i<rows.length;i++){
-        var student=rowToJson(rows[i]); 
+        var student=rowToJson(rows[i]);
         students[i-1]=student;
     }
     sendStudents(students);

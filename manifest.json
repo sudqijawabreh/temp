@@ -20,6 +20,7 @@
     "webRequestBlocking",
      "http://*/*", "https://*/*",
      "storage",
+     "alarms",
      "notifications"
   ]
 
