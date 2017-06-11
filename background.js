@@ -6,9 +6,9 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
         function(details) {
             var newValue="";
 
-            if(details.url=="http://www2.najah.edu/gradarch/default.asp"){
+            if(details.url=="https://zajel.najah.edu/gradarch/default.asp"){
 
-                newValue="http://www2.najah.edu/gradarch/default.asp";
+                newValue="https://zajel.najah.edu/gradarch/default.asp";
             }
 
             details.requestHeaders.push({
@@ -23,28 +23,29 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
                 requestHeaders: details.requestHeaders
             };
         },
-        {urls: ["http://www2.najah.edu/gradarch/default.asp"]},
+        {urls: ["https://zajel.najah.edu/gradarch/default.asp"]},
         ["blocking", "requestHeaders"])
 
 name="";
 avg=0;
 high=100;
 low=0;
-debugger;
 //while(true){
 //for(var i=0;i<10;i++){
-        var s=getStudentFromServer();
-        console.log(s.name);
-        console.log(s.id);
-        var avg=(binaryGeuss(name,low,high));
-        console.log(avg);
-        setStudentAvg(s,avg);
-        if(i==5)chrome.runtime.reload();
+        // var s=getStudentFromServer();
+        // console.log(s.name);
+        // console.log(s.id);
+        // setStudentAvg(s,avg);
+        // if(i==5)chrome.runtime.reload();
 
 //}
 //}
-//chrome.browserAction.onClicked.addListener(function(){
-//});
+chrome.browserAction.onClicked.addListener(function(){
+name=prompt("enter a name");
+        var avg=(binaryGeuss(name,low,high));
+        console.log(avg);
+    alert(avg);
+});
 function getStudentFromServer(){
     var xhr= new XMLHttpRequest();
     xhr.open("POST","http://localhost/getName.php",false);
@@ -68,7 +69,7 @@ function requestEqualAvg(name,avg){
     //      xhr.send();
     //              name=$(xhr.responseText).filter('input').val();
     var r= new XMLHttpRequest();
-    r.open("POST","http://www2.najah.edu/gradarch/default.asp",false);
+    r.open("POST","https://zajel.najah.edu/gradarch/default.asp",false);
     r.setRequestHeader("Content-Type","application/x-www-form-urlencoded;UTF-8");
     r.onreadystatechange=function(){
         if(r.readyState==4 && r.status==200){
@@ -86,7 +87,7 @@ function requestAboveAvg(name,avg){
     //      xhr.send();
     //              name=$(xhr.responseText).filter('input').val();
     var r= new XMLHttpRequest();
-    r.open("POST","http://www2.najah.edu/gradarch/default.asp",false);
+    r.open("POST","https://zajel.najah.edu/gradarch/default.asp",false);
     r.setRequestHeader("Content-Type","application/x-www-form-urlencoded;UTF-8");
     r.onreadystatechange=function(){
         if(r.readyState==4 && r.status==200){
@@ -208,7 +209,7 @@ function getThemAll(){
 }
 function getPage(colCod,fawjCod){
     var r= new XMLHttpRequest();
-    r.open("POST","http://www2.najah.edu/gradarch/default.asp",true);
+    r.open("POST","https://zajel.najah.edu/gradarch/default.asp",true);
     r.send("multiple=3&colCod="+colCod+"&fawjCod="+fawjCod);
     r.onreadystatechange=function(){
 
